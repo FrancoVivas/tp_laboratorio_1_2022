@@ -1,141 +1,79 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
 #include "funciones.h"
 
 int main()
 {
-    //Declaracion de variables
-
-    //A = PRIMER OPERANDO
-    //B = SEGUNDO OPERANDO
-    float a;
-    float b;
-    int respuestaMenu;
-    float sumaResuelta;
-    float restaResuelta;
-    float divisionResuelta;
-    float multiplicacionResuelta;
-    int factorizacionPrimerOperandoResuelta;
-    int factorizacionSegundoOperandoResuelta;
-    int flagUno;
-    int flagDos;
-    int flagTres;
-
-    //Inicializacion de variables
-    a=0;
-    b=0;
-    flagUno=0;
-    flagDos=0;
-    flagTres=0;
-
-    do
-    {
-        //Muestro valores actuales del  PRIMER y SEGUNDO operando
-        printf("\n  -----------------------");
-        printf("\n|                        |");
-        printf("\n|    A=%.2f   B=%.2f     |",a,b);
-        printf("\n|                        |");
-        printf("\n  -----------------------");
-
-        //Muestra el menu y guarda la respuesta del usuario
-        respuestaMenu = mostrarMenu(respuestaMenu);
-
-        //Segun la respuesta del usuario, realiza una accion
-        switch (respuestaMenu)
-        {
-
-            //Pido PRIMER operando
-            case 1:
-
-                a = pedirNumero(a, respuestaMenu);
-                flagUno=1;
-
-                break;
-
-            //Pido SEGUNDO operando
-            case 2:
-
-                //Si NO ingreso el PRIMER operando
-                if(!flagUno)
-                {
-                    printf("Tiene que ingresar el operando 1\n");
-                    system("pause");
-                    system("cls");
-                }
-                else
-                {
-                b = pedirNumero(b, respuestaMenu);
-                flagDos=1;
-                }
-
-                break;
-
-            //Calculo las operaciones
-            case 3:
-
-                //Si NO ingreso uno o mas operandos
-                if(!flagUno || !flagDos)
-                {
-                    printf("Para calcular primero tiene que ingresar los operandos\n");
-                    system("pause");
-                    system("cls");
-                }
-                //Si ingreso correctamente los operandos
-                else
-                {
-                sumaResuelta=sumarOperandos(a,b);
-                restaResuelta=restarOperandos(a,b);
-                divisionResuelta=dividirOperadores(a,b);
-                multiplicacionResuelta=multiplicarOperadores(a,b);
-                factorizacionPrimerOperandoResuelta=factorizarOperando(a);
-                factorizacionSegundoOperandoResuelta=factorizarOperando(b);
-                flagTres=1;
-                }
-
-                break;
-
-            //Muestro los resultados
-            case 4:
-                //Si NO calculo antes de mostrar
-                if(!flagTres)
-                {
-                    printf("No se puede calcular antes de mostrar\n");
-                    system("pause");
-                    system("cls");
-                }
-                //Si calculo antes de mostrar
-                else
-                {
-                    mostrarOperaciones(a,b,sumaResuelta,restaResuelta,divisionResuelta,multiplicacionResuelta,factorizacionPrimerOperandoResuelta,factorizacionSegundoOperandoResuelta);
-                    printf("Si continua, los datos van a ser restablecidos a 0\n");
-                    system("pause");
-                    system("cls");
-                    //Se resetan los valores para volver a usar la calculadora
-                    flagUno=0;
-                    flagDos=0;
-                    flagTres=0;
-                    a=0;
-                    b=0;
-                }
-
-                break;
-
-            //Salir de la calculadora
-            case 5:
-
-                //Mensaje de salida
-                printf("Apagando...\n\n\n\n\n");
-                break;
-
-            //Si NO ingreso ninguna de las opciones del menu
-            default:
-                {
-                    //Mensaje de ERROR
-                    printf("ERROR. La opcion ingresada no coincide con las disponibles.\n\n");
-                }
-        }
-
-
-    //Condicion que hace que el bucle itere
-    }while(respuestaMenu != 5);
+    setbuf(stdout, NULL);
+	float enterKilometro;
+	float priceFlightAero;
+	float priceFlightLatam;
+	float priceDebitAero;
+	float priceDebitLatam;
+	float priceCreditAero;
+	float priceCreditLatam;
+	float priceBTCAero;
+	float priceBTCLatam;
+	float priceKilometroAero;
+	float priceKilometroLatam;
+	float diferencePrice;
+	int validation;
+	int optionMenu;
+	int flag;
+	flag=0;//bandera para saber si se calculo correctamente todos los datos en la opcion 3
+	enterKilometro=-1;//Inicializo para saber si ingreso o no un numero
+	priceFlightAero=-1;//Inicializo para saber si ingreso o no un numero
+	priceFlightLatam=-1;//Inicializo para saber si ingreso o no un numero
+	do{
+		system("CLS");
+		maskMenu(&optionMenu, enterKilometro, priceFlightAero, priceFlightLatam);
+		switch(optionMenu)
+		{
+			case 1:
+				getKilometro(&enterKilometro,"Ingrese los Kilometros: \n", "Error, ingrese un dato valido en Kilometros:\n", 0 ,2 );
+				break;
+			case 2:
+				getPriceAeroLatam(&priceFlightAero, &priceFlightLatam,"Ingrese precio de vuelo Aerolineas: \n", "Ingrese precio de vuelo Latam: \n", "Error, ingrese correctamente el precio.\n",2,2);
+				break;
+			case 3:
+			    validation=validationIngress(&enterKilometro, &priceFlightAero, &priceFlightLatam);
+			    if(validation==1)
+			    {
+			    	calculateDescount(priceFlightAero, &priceDebitAero, 10);
+			    	calculateDescount(priceFlightLatam, &priceDebitLatam, 10);
+			    	calculateInterest(priceFlightAero, &priceCreditAero, 25);
+			    	calculateInterest(priceFlightLatam, &priceCreditLatam, 25);
+			    	calculatePriceBTC(priceFlightAero, &priceBTCAero);
+			    	calculatePriceBTC(priceFlightLatam, &priceBTCLatam);
+			    	priceKilometroAero = priceFlightAero/enterKilometro;
+			    	priceKilometroLatam = priceFlightLatam/enterKilometro;
+			    	diferencePrices(priceFlightAero,priceFlightLatam, &diferencePrice);
+			    	printf("Calculo exitoso.\n");
+			    	flag++;// bandera para saber si se calculo correctamente los datos.
+			    	system("pause");
+			    }
+				break;
+			case 4:
+				if(flag!=0)//bandera si esta diferente a 0 es por que el calculo se hizo o hicieron correctamente.
+				{
+					showResult(enterKilometro, priceFlightAero, priceFlightLatam, priceDebitAero, priceDebitLatam, priceCreditAero, priceCreditLatam, priceBTCAero, priceBTCLatam, priceKilometroAero, priceKilometroLatam, diferencePrice);
+				}
+				else
+				{
+					printf("Por favor antes calcule los datos para informarlos.\n");
+				}
+			    system("pause");
+				break;
+			case 5:
+			    showChargeForce();
+				break;
+			default:
+			break;
+		}
+	}
+	while(optionMenu!=6);
+	return 0;
 }
+
