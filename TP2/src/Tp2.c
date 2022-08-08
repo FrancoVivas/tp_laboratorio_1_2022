@@ -1,220 +1,111 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
+#include <string.h>
+#include "ArrayPassenger.h"
+#include "funciones.h"
+#include "validaciones.h"
 
-#include "pasajero.h"
-#include "arrayPassenger.h"
+int main(void) {
 
-#define TAM 2000
-#define TAM_EST_VUELO 2
-#define TAM_TIPO_PASAJERO 3
+		setbuf(stdout, NULL);
 
+	Passenger listaPassengers [QTYPASS];
 
-int main(void)
-{
-	setbuf(stdout, NULL);
+	initPassengers (listaPassengers, QTYPASS);
 
-    char confSalida = 'n';
-    char confIngreso = 'n';
-    char mensaje[50];
-    int contEspacio;
-    int banderaMenu = 0;
-    int opcionInformar;
-    int opcionModificar;
-    int id = 1000;
-    int idRequerido;
-    int indice;
-    int harcodeo;
-    int criterio = 0;
-    ePasajero lista[TAM];
-    ePasajero aux;
-    eTipoDePasajero tipo[TAM_TIPO_PASAJERO]=
-    {
-        {1, "Primera clase"},
-        {2, "Clase ejecutiva"},
-        {3, "Economica"}
-    };
-    eEstadoDeVuelo estado[TAM_EST_VUELO] =
-    {
-        {1, "Activo"},
-        {2, "Inactivo"}
-    };
+	char opcion[TAM];
+	int flagInitPass;
+	int flagEmptyMsg;
+	int intOpcion;
+	int removeById;
+	int cantidadPass;
 
+	flagEmptyMsg = 1;
 
-    initPassengers(lista, TAM);
-    do
-    {
-        system("cls");
-        switch(menu())
-        {
-        case 1:
-            strcpy(mensaje, "Alta pasajero");
-            confirmaIngreso(&confIngreso, mensaje);
+	cantidadPass = 0;
 
-            if(confIngreso == 'S')
-            {
-                printf("Ha ingresado a la opcion Alta del pasajero\n\n");
-                if(buscarPosicionLibre(lista, TAM, &indice))
-                {
-                    ingresoPasajero(&aux, &id);
-                    addPassenger(lista, TAM, aux.id, aux.nombre, aux.apellido, aux.precio, aux.codigoDeVuelo, aux.tipoDePasajero, aux.estadoDelVuelo, indice);
-                    banderaMenu = 1;
-                }
-                else
-                {
-                    printf("No hay mas espacio en el sistema!!\n");
-                }
-            }
-            else
-            {
-                printf("Se cancelo el alta de pasajero\n\n");
-            }
+	do
+	{
+		EmptySpaces (listaPassengers, QTYPASS, &flagInitPass);
 
-            system("pause");
-            confIngreso = 'n';
-            break;
-        case 2:
-            if(banderaMenu == 1)
-            {
-                strcpy(mensaje, "Modificar pasajero");
-                confirmaIngreso(&confIngreso, mensaje);
+		if(flagInitPass == VACIO && flagEmptyMsg == 1){
+			printf(">>> La lista esta vacia. <<<\n");
+			//flagEmptyMsg = 0;
+		}
 
-                if(confIngreso == 'S')
-                {
-                    printf("Ha ingresado a la opcion Modificar pasajero\n\n");
-                    listarPasajeros(TAM, lista, estado, TAM_EST_VUELO, tipo, TAM_TIPO_PASAJERO);
-                    printf("\nIngrese el id del pasajero al que le quiera modificar un valor: ");
-                    scanf("%d", &idRequerido);
+		printf("_________________________\n"
+			   "1| ALTA empleado. %8s\n"
+			   "2| MODIFICAR empleado. %3s\n"
+			   "3| BAJA empleado. %8s\n"
+			   "4| INFORMAR (Submenu). %3s\n"
+		       "5| CARGA FORZADA. %8s\n"
+			   "0| Salir. %16s\n"
+			   "_|_______________________|\n", "|", "|", "|", "|", "|", "|");
 
-                    if(findPassengerById(lista, TAM, idRequerido, &indice))
-                    {
-                        system("cls");
-                        listarUnPasajero(indice, lista, estado, TAM_EST_VUELO, tipo, TAM_TIPO_PASAJERO);
-                        opcionModificar = subMenuModificar();
-                        modificacionPasajero(lista, indice, opcionModificar);
-                    }
-                    else
-                    {
-                        printf("No se encontro un id existente\n\n");
-                    }
-                }
-                else
-                {
-                    printf("Se cancelo la modificacion de pasajero\n\n");
-                }
-            }
-            else
-            {
-                printf("\nSe debe ingresar un pasajero antes de acceder a la funcion\n");
-            }
+		GetOption(opcion, TAM, &intOpcion);
+		while(intOpcion < 0 || intOpcion > 5){
+			printf(">>> Error. Ingrese un numero valido.\n");
+			GetOption(opcion, TAM, &intOpcion);
+		}
+		printf("\n");
 
-            system("pause");
-            confIngreso = 'n';
-            break;
-        case 3:
-            if(banderaMenu == 1)
-            {
-                strcpy(mensaje, "Baja pasajero");
-                confirmaIngreso(&confIngreso, mensaje);
+		while (intOpcion< 0|| intOpcion > 5){
+			printf("Error! Ingrese opcion valida... :");
+			fflush(stdin);
+			scanf("%d", &intOpcion);
+		}
 
-                if(confIngreso == 'S')
-                {
-                    printf("Ha ingresado a la opcion Darle de baja al pasajero\n\n");
-                    listarPasajeros(TAM, lista, estado, TAM_EST_VUELO, tipo, TAM_TIPO_PASAJERO);
-                    printf("\nIngrese el id del pasajero que le quiera dar de baja: ");
-                    scanf("%d", &idRequerido);
+		if(intOpcion == 5){
+			flagInitPass = CARGADO;
+			flagEmptyMsg = 0;
 
-                    confIngreso = 'n'; // reseteo la variable
+		}
+		if(flagInitPass == 0 && intOpcion != 0 && intOpcion != 1){
+			printf(">>> La lista esta vacia.\n");
+			flagEmptyMsg= 0;
+		}
+		else{
+			switch(intOpcion){
+				case 1: //ALTA
+					if(getPassenger(listaPassengers, QTYPASS, &cantidadPass) != 0){
+						printf(">>> Error. La lista ya esta llena. \n");
+					}
+				break;
 
-                    system("cls");
-                    if(findPassengerById(lista, TAM, idRequerido, &indice))
-                    {
-                        listarUnPasajero(indice, lista, estado, TAM_EST_VUELO, tipo, TAM_TIPO_PASAJERO);
+				case 2: //MODIFICAR
+					if(ModifyPassenger(listaPassengers, QTYPASS, TAM) == -1){
+						printf(">>> Ocurrio un error inesperado.\n");
+					}
+				break;
 
-                        printf("Confirma darle de baja al Pasajero \"%s %s\" con id %d?\n", lista[indice].nombre, lista[indice].apellido, idRequerido);
-                        confirma(&confIngreso);
-                    }
+				case 3: //BAJA
+					printPassengers(listaPassengers, QTYPASS);
+					GetIntNoVerification(">>> Ingrese el ID a eliminar: ", &removeById);
+					if(removePassenger(listaPassengers, QTYPASS, removeById) == 0){
+						printf(">>> Se elimino el pasajero con exito.\n");
+					}
+				break;
 
-                    if(confIngreso == 'S')
-                    {
-                        if(removePassenger(lista, TAM, idRequerido))
-                        {
-                            printf("Se le dio de baja al pasajero correctamente\n\n");
-                        }
-                        else
-                        {
-                            printf("Ocurrio un error al dar de baja al pasajero\n\n");
-                        }
-                    }
-                    else
-                    {
-                        printf("La baja del pasajero fue cancelada\n\n");
-                    }
-                }
-                else
-                {
-                    printf("La baja del pasajero fue cancelada\n\n");
-                }
-            }
-            else
-            {
-                printf("\nSe debe ingresar un pasajero antes de acceder a la funcion\n");
-            }
-            system("pause");
-            confIngreso = 'n';
-            break;
-        case 4:
-            strcpy(mensaje, "Carga forzada");
-            confirmaIngreso(&confIngreso, mensaje);
-
-            if(confIngreso == 'S')
-            {
-                printf("Ha ingresado a la opcion Carga forzada de pasajeros\n\n");
-                buscarPosicionesDisponibles(lista, TAM, &contEspacio);
-                printf("Elija la cantidad de pasajeros que desea cargar forzadamente (un maximo de %d pasajeros): ", contEspacio);
-                scanf("%d", &harcodeo);
-                if(harcodearPasajeros(lista, TAM, harcodeo, &id))
-                {
-                    printf("Se cargaron los pasajeros correctamente\n\n");
-                    banderaMenu = 1;
-                }
-                else if(contEspacio == 0)
-                {
-                    printf("No hay mas espacio en el sistema!!\n\n");
-                }
-                else
-                {
-                    printf("No se pudo cargar los pasajeros porque supera el limite: %d\n\n", contEspacio);
-                }
-            }
-            else
-            {
-                printf("La carga forzada fue cancelada\n\n");
-            }
-
-            system("pause");
-            confIngreso = 'n';
-            break;
-        case 5:
-            if(banderaMenu == 1)
-            {
-                opcionInformar = subMenuInformar(&criterio);
-                informarPasajero(lista, TAM, estado, TAM_EST_VUELO, tipo, TAM_TIPO_PASAJERO, opcionInformar, criterio);
-            }
-            else
-            {
-                printf("\nSe debe ingresar un pasajero antes de acceder a la funcion\n");
-            }
-            system("pause");
-            break;
-        case 6:
-            confirmaSalida(&confSalida);
-            break;
-        }
-    }
-    while(confSalida != 'S');
+				case 4: //INFORMAR
+					printf(">>> Submenu INFORMAR.\n");
+					InformSubMenu(listaPassengers, QTYPASS, TAM, &intOpcion);
+				break;
+				case 5: //CARGA FORZADA
+					cargaForzada (listaPassengers, QTYPASS);
+				break;
+				case 0: //SALIR
+					printf("Fin del programa. ");
+				break;
+			}
+		}
 
 
-    return 0;
+
+	}while(intOpcion != SALIR);
+
+
+	return EXIT_SUCCESS;
 }
+}
+

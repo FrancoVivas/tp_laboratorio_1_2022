@@ -1,105 +1,70 @@
-#ifndef ARRAYPASSENGER_H_INCLUDED
-#define ARRAYPASSENGER_H_INCLUDED
+#ifndef ARRAYPASSENGER_H_
+#define ARRAYPASSENGER_H_
+#define SALIR 0
+#define MINOPCION 0
+#define TAM 51
+#define QTYPASS 5
+#define CARGADO 1
+#define MENOR 1
+#define ADULTO 2
+#define JUBILADO 3
+#define DEMORADO 1
+#define CANCELADO 2
+#define ATERRIZADO 3
+#define ACTIVO 4
+#define VACIO 0
+#define NAME 1
+#define LASTNAME 2
+#define PRICE 3
+#define TYPEPASS 4
+#define FLYCODE 5
+#define DIA 6
+#define MES 7
+#define ANIO 8
+#define ATOZ 1
+#define ZTOA 0
 
-typedef struct
-{
-int id;
-char nombre[51];
-char apellido[51];
-float precio;
-char codigoDeVuelo[10];
-int tipoDePasajero;
-int estadoDelVuelo;
-int isEmpty;
-}ePasajero;
+typedef struct {
+	int dia;
+	int mes;
+	int anio;
+}eFecha;
 
-#endif  // ARRAYPASSENGER_H_INCLUDED
+typedef struct {
+	int id;
+	char name[51];
+	char lastName [51];
+	float price;
+	char flycode[10];
+	int typePassenger;
+	int statusFlight;
+	eFecha fecha;
+	int isEmpty;
+}Passenger;
 
-/** \brief  To indicate that all position in the array are empty,
- * this function put the flag (isEmpty) in TRUE (1) in all
- * position of the array
- *
- * \param vec ePasajero* Pointer to array of passenger
- * \param tam int Array length
- * \return int Return (0) if Error [Invalid length or NULL pointer] - (1) if Ok
- *
- */
-int initPassengers(ePasajero* vec, int tam);
-
-
-
-/** \brief add in a existing list of passengers the values received as parameters
- *           in the first empty position
- *
- * \param lista ePasajero* Pointer to array of passenger
- * \param tam int Array length
- * \param id int Id Passenger
- * \param nombre char* Name Passenger
- * \param apellido char* LastName Passenger
- * \param precio float price Passenger
- * \param codigoDeVuelo char* FlyCode Passenger
- * \param tipoDePasajero int typePassenger (first class, business class, etc)
- * \param estadoDelVuelo int statusFlight (1 is "Active", 2 is "Inactive")
- * \param i int (index to load array)
- * \return int Return (0) if Error [Invalid length or NULL pointer or without free space] - (1) if Ok
- *
-*/
-int addPassenger(ePasajero* lista, int tam, int id, char* nombre,char*
-                 apellido,float precio,char* codigoDeVuelo,int tipoDePasajero, int estadoDelVuelo, int i);
-
-
-/** \brief find a Passenger by Id and returns the index position in array in pointer pIndex.
- *
- * \param vec ePasajero* Pointer to array of passenger
- * \param tam int Array length
- * \param id int Id Passenger
- * \param pIndex int* First free index
- * \return int Return (0) if Error [Invalid length or NULL pointer or without free space] - (1) if Ok
- *
- */
-int findPassengerById(ePasajero* vec, int tam,int id, int* pIndex);
-
-
-/** \brief Remove a Passenger by Id (put isEmpty Flag in 1)
- *
- * \param vec ePasajero* Pointer to array of passenger
- * \param tam int Array length
- * \param id int Id Passenger
- * \return int Return (0) if Error [Invalid length or NULL pointer or without free space] - (1) if Ok
- *
- */
-int removePassenger(ePasajero* vec, int tam, int id);
-
-
-/** \brief  print the content of passengers array
- *
- * \param lista ePasajero* Pointer to array of passenger
- * \param tam int Array length
- * \return int Return (0) if Error [Invalid length or NULL pointer or without free space] - (1) if Ok
- *
- */
-int printPassengers(ePasajero* lista, int tam);
-
-
-/** \brief Sort the elements in the array of passengers, the argument criterio
-indicate UP or DOWN order
- *
- * \param lista ePasajero* Pointer to array of passenger
- * \param tam int Array length
- * \param criterio int Order(1 UP, 0 DOWN)
- * \return int Return (0) if Error [Invalid length or NULL pointer or without free space] - (1) if Ok
- *
- */
-int sortPassengers(ePasajero* lista, int tam, int criterio);
-
-
-/** \brief Sort the elements in the array of passengers, the argument criterio
- *          indicate UP or DOWN order by code
- *
- * \param lista ePasajero* Pointer to array of passenger
- * \param tam int Array length
- * \param criterio int Order(1 UP, 0 DOWN)
- * \return int Return (0) if Error [Invalid length or NULL pointer or without free space] - (1) if Ok
- *
- */
-int sortPassengersByCode(ePasajero* lista, int tam, int criterio);
+int findPassengerById(Passenger list[], int len, int id);
+void cargaForzada (Passenger list[], int tam);
+int GetDataToModify();
+int ModifyPassenger (Passenger list[], int len, int tam);
+int GetOccupiedId(Passenger list[], int len);
+void InformSubMenu(Passenger list[], int len, int tam, int* mainMenuOption);
+int AveragePrices(Passenger list[], int len);
+int getPassenger(Passenger lista[], int tam, int* cantidadPass);
+int getTypePassenger();
+int getStatusFlight();
+void EmptySpaces (Passenger lista[], int tam, int* flagEmptyList);
+int initPassengers(Passenger list[], int len);
+int addPassenger(Passenger list[], int len, int statusFlight,int id, char name[],char lastName[],float price,int typePassenger, char flycode[], int dia, int mes, int anio);
+int findPassengerById(Passenger list[], int len,int id);
+int removePassenger(Passenger list[], int len, int id);
+int sortPassengers(Passenger list[], int len, int order);
+int printPassengers(Passenger list[], int length);
+int printOnePassenger(Passenger list);
+int sortPassengersByCode(Passenger list[], int len, int order);
+int GetOrder(char order[], int len);
+void SortZtoA(Passenger list[], int len);
+void SortAtoZ(Passenger list[], int len);
+void printPassengerActive (Passenger list[], int len);
+void TopPartChart();
+void BottomPartChart();
+#endif /* ARRAYPASSENGER_H_ */
